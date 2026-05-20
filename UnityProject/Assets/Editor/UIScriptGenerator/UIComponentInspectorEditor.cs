@@ -10,7 +10,7 @@ using UnityEngine;
 namespace GameLogic
 {
     [CustomEditor(typeof(UIBindComponent))]
-    public class UIComponentInspectorEditor : Editor
+    public class UIComponentInspectorEditor : UnityEditor.Editor
     {
         private UIBindComponent m_uiBindComponent;
         private ReorderableList m_reorderableList;
@@ -37,11 +37,62 @@ namespace GameLogic
             m_uiType = serializedObject.FindProperty("uiType");
 
             serializedObject.Update();
-            m_className.stringValue = target.name;
-            m_genCodePath.stringValue = ScriptGeneratorSetting.GetGenCodePath();
-            m_impCodePath.stringValue = ScriptGeneratorSetting.GetImpCodePath();
+            // 仅在首次（为空）时初始化，避免覆盖用户在 UIComponentEditor.cs 中配置的持久化数据
+            if (string.IsNullOrEmpty(m_className.stringValue))
+            {
+                m_className.stringValue = GetClassName(target.name);
+            }
+            if (string.IsNullOrEmpty(m_genCodePath.stringValue))
+            {
+                m_genCodePath.stringValue = ScriptGeneratorSetting.GetGenCodePath();
+            }
+            if (string.IsNullOrEmpty(m_impCodePath.stringValue))
+            {
+                m_impCodePath.stringValue = ScriptGeneratorSetting.GetImpCodePath();
+            }
             serializedObject.ApplyModifiedProperties();
             CreateReorderableList();
+        }
+
+        string GetClassName(string targetName)
+        {
+            // UIWindow 直接用物体名
+            if (m_selectedIndex == 0)
+            {
+                return targetName;
+            }
+            // UIWidget用UIWindow名拼接物体名
+            var rules = ScriptGeneratorSetting.GetScriptGenerateRule()
+                .Where(r => r.isUIWidget);
+            foreach (var rule in rules)
+            {
+                if (rule.isUIWidget && targetName.StartsWith(rule.uiElementRegex))
+                {
+                    var parent = ((UIBindComponent)target).transform.parent;
+                    while (true)
+                    {
+                        var uiBindComponent = parent.GetComponent<UIBindComponent>();
+                        if (uiBindComponent)
+                        {
+                            if (uiBindComponent.uiType == ScriptGeneratorSetting.Instance.UIGenTypes[0].uiTypeName)
+                            {
+                                targetName = $"{parent.name.Replace("UI", string.Empty)}{targetName.Replace(rule.uiElementRegex, string.Empty)}Widget";
+                            }
+                            else
+                            {
+                                targetName = $"{uiBindComponent.className.Replace("Widget", string.Empty)}{targetName.Replace(rule.uiElementRegex, string.Empty)}Widget";
+                            }
+                            break;
+                        }
+                        parent = parent.parent;
+                        if (!parent)
+                        {
+                            break;
+                        }
+                    }
+                }
+            }
+            return targetName;
         }
 
         private void CreateReorderableList()
@@ -183,7 +234,33 @@ namespace GameLogic
                 // 确保有选项时才显示 Popup
                 if (m_uiTypeOptions.Length > 0)
                 {
-                    m_selectedIndex = EditorGUILayout.Popup("UI类型", m_selectedIndex, m_uiTypeOptions);
+                    // 优先根据 uiType(字符串) 还原选择，避免规则顺序变化导致 index 错位
+                    if (m_uiType != null && !string.IsNullOrEmpty(m_uiType.stringValue))
+                    {
+                        int indexByName = System.Array.IndexOf(m_uiTypeOptions, m_uiType.stringValue);
+                        if (indexByName >= 0)
+                        {
+                            m_selectedIndex = indexByName;
+                        }
+                    }
+
+                    // index 越界保护（规则数量变更/配置变更）
+                    m_selectedIndex = Mathf.Clamp(m_selectedIndex, 0, m_uiTypeOptions.Length - 1);
+
+                    int newIndex = EditorGUILayout.Popup("UI类型", m_selectedIndex, m_uiTypeOptions);
+                    if (newIndex != m_selectedIndex)
+                    {
+                        m_selectedIndex = newIndex;
+                    }
+
+                    if (m_uiType != null)
+                    {
+                        string selectedTypeName = m_uiTypeOptions[m_selectedIndex];
+                        if (m_uiType.stringValue != selectedTypeName)
+                        {
+                            m_uiType.stringValue = selectedTypeName;
+                        }
+                    }
                 }
                 else
                 {
@@ -192,9 +269,13 @@ namespace GameLogic
                 // EditorGUILayout.PropertyField(m_uiType, new GUIContent("UI类型"));
                 EditorGUILayout.BeginHorizontal();
                 EditorGUILayout.PropertyField(m_className, new GUIContent("类名"));
-                if(GUILayout.Button("物体名", GUILayout.Width(60), GUILayout.Height(18)))
+                if (GUILayout.Button("物体名", GUILayout.Width(60), GUILayout.Height(18)))
                 {
                     m_className.stringValue = target.name;
+                }
+                if (GUILayout.Button("默认", GUILayout.Width(60), GUILayout.Height(18)))
+                {
+                    m_className.stringValue = GetClassName(target.name);
                 }
                 EditorGUILayout.EndHorizontal();
 
@@ -272,7 +353,6 @@ namespace GameLogic
                         Debug.LogError("路径不能为空" + newPath);
                         string defaultPath = GetDefaultPathByPropertyType(pathProperty);
                         pathProperty.stringValue = defaultPath;
-
                     }
                     else
                     {

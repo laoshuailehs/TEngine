@@ -54,8 +54,11 @@ public class EventInterfaceGenerator : ISourceGenerator
             }  
         }  
         
-        string uniqueFileName = $"GameEventHelper.g.cs";
-        context.AddSource(uniqueFileName, GenerateGameEventHelper(classNameList));
+        if (classNameList.Count > 0)
+        {
+            string uniqueFileName = $"GameEventHelper.g.cs";
+            context.AddSource(uniqueFileName, GenerateGameEventHelper(classNameList));
+        }
     }  
     
     private string GenerateGameEventHelper(List<string> classNameList)
@@ -152,7 +155,8 @@ public class EventInterfaceGenerator : ISourceGenerator
         sb.AppendLine($"        public {interfaceName}_Gen(EventDispatcher dispatcher)");  
         sb.AppendLine("        {");  
         sb.AppendLine("            _dispatcher = dispatcher;");  
-        sb.AppendLine($"             GameEvent.EventMgr.RegWrapInterface(\"{interfaceFullName}\", this);");
+        // sb.AppendLine($"             GameEvent.EventMgr.RegWrapInterface(\"{interfaceFullName}\", this);");
+        sb.AppendLine($"             GameEvent.EventMgr.RegWrapInterface<{interfaceFullName}>(this);");
         sb.AppendLine("        }");  
 
         foreach (var method in interfaceNode.Members.OfType<MethodDeclarationSyntax>())  
