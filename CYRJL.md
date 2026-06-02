@@ -95,3 +95,19 @@ private void ShowTimer(float time)
 - ScenesMgr.cs 场景管理器
 
 - SoundManager.cs 音效播放管理器
+
+## 1. 技术栈
+游戏引擎: Unity  
+
+编程语言: C#  
+
+热更新: HybridCLR（支持IL2CPP热更）  
+
+2D动画: Spine  
+
+网络: WebSocket (UnityWebSocket)  
+
+硬件交互: SBox SDK（街机设备控制）  
+
+IoT集成: 投币器、出票器等硬件设备  
+
