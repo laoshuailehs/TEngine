@@ -16,8 +16,8 @@ MonoBehaviour:
   ShowEditorAlias: 1
   UniqueBundleName: 1
   Packages:
-  - PackageName: DefaultPackage
-    PackageDesc: 
+  - PackageName: WainX
+    PackageDesc: HsNb
     EnableAddressable: 1
     SupportExtensionless: 1
     LocationToLower: 0

@@ -23,3 +23,6 @@ Tools/GameEventSourceGenerator/SourceGenerator/obj
 
 #openspec
 openspec/
+
+#Hfs
+/[Hh]fs/

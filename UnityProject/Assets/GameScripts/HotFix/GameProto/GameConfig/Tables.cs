@@ -33,6 +33,24 @@ public partial class Tables
             m_TbItem.ResolveRef(this);
         }
     }
+    private C_Card.LubanCardConfig m_LubanCardConfig;
+    public C_Card.LubanCardConfig LubanCardConfig 
+    {
+        get
+        {
+            if (m_LubanCardConfig == null)
+            {
+                m_LubanCardConfig = new C_Card.LubanCardConfig(defaultLoader("c_card_lubancardconfig"));
+                m_LubanCardConfig.ResolveRef(this);
+            }
+            return m_LubanCardConfig;
+        }
+        set
+        {
+            m_LubanCardConfig = value;
+            m_LubanCardConfig.ResolveRef(this);
+        }
+    }
 
     #endregion
 

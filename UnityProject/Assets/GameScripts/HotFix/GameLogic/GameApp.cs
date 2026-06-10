@@ -32,13 +32,23 @@ public partial class GameApp
         Log.Warning("======= StartGameLogic =======");
         StartGameLogic();
     }
-    
+
     private static void StartGameLogic()
     {
         // GameEvent.Get<ILoginUI>().ShowLoginUI();
-        GameModule.UI.ShowUIAsync<BattleMainUI>();
+        GameModule.UI.ShowUIAsync<LoginUI>();
+        // TestLuBan();
     }
-    
+
+    private static void TestLuBan()
+    {
+        ConfigSystem.Instance.Load();
+        foreach (var item in ConfigSystem.Instance.Tables.LubanCardConfig.DataList)
+        {
+            Log.Debug(item.Name + " |" + item.Icon);
+        }
+    }
+
     private static void Release()
     {
         SingletonSystem.Release();
