@@ -28,8 +28,21 @@ namespace GameLogic
                     if (NavMesh.SamplePosition(hit.point, out NavMeshHit navHit, 1.0f, NavMesh.AllAreas))
                     {
                         agent.SetDestination(navHit.position);
+                        FaceTo(navHit.position);
                     }
                 }
+            }
+        }
+
+        void FaceTo(Vector3 targetPoint)
+        {
+            Vector3 dir = targetPoint - transform.position;
+            dir.y = 0;
+
+            if (dir != Vector3.zero)
+            {
+                Quaternion rot = Quaternion.LookRotation(dir);
+                transform.rotation = rot;
             }
         }
     }
