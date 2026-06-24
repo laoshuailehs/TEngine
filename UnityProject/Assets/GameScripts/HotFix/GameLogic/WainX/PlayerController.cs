@@ -1,49 +1,120 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.AI;
 
 namespace GameLogic
 {
+    /// <summary>
+    /// 亡灵杀手风格玩家控制器 — 鼠标点击移动，匀速行走，平滑转向。
+    ///
+    /// 核心：
+    ///   1. 移动速度恒定，转向不减速（NavMeshAgent 高加速度）
+    ///   2. 角色朝移动方向平滑旋转（不是瞬间转向目标点）
+    ///   3. Animator 由 agent 实际速度驱动
+    /// </summary>
     public class PlayerController : MonoBehaviour
     {
-        private NavMeshAgent agent;
+        private static readonly int Run = Animator.StringToHash("run");
+
+        [Header("组件引用")]
+        [SerializeField] private Animator _animator;
+
+        [Header("移动")]
+        [SerializeField] private float moveSpeed = 5f;
+        [SerializeField] private float acceleration = 60f;
+        [Tooltip("转向平滑速度（度/秒），越大转身越快")]
+        [SerializeField] private float rotateSpeed = 720f;
+
+        [Header("战斗")]
+        [SerializeField] private float attackRadius = 2f;
+
+        [Header("地面")]
         public LayerMask groundLayer;
+
+        private NavMeshAgent _agent;
 
         void Start()
         {
-            agent = GetComponent<NavMeshAgent>();
+            _agent = GetComponent<NavMeshAgent>();
+
+            // 配置 NavMeshAgent：匀速 + 不自动旋转
+            _agent.updateRotation = false;
+            _agent.speed = moveSpeed;
+            _agent.acceleration = acceleration;
+            _agent.angularSpeed = 0f; // 我们自己控制旋转，不需要 agent 的角速度
         }
 
         void Update()
         {
-            if (Input.GetMouseButtonDown(0)) // 左键点击
-            {
-                Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
-                RaycastHit hit;
+            HandleInput();
+            UpdateMovement();
+            UpdateRotation();
+        }
 
-                if (Physics.Raycast(ray, out hit, 100f, groundLayer))
+        /// <summary>处理鼠标点击移动。</summary>
+        private void HandleInput()
+        {
+            if (!Input.GetMouseButtonDown(1)) return;
+
+            Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
+            if (!Physics.Raycast(ray, out RaycastHit hit, 100f, groundLayer)) return;
+            if (!NavMesh.SamplePosition(hit.point, out NavMeshHit navHit, 1.0f, NavMesh.AllAreas)) return;
+
+            _agent.SetDestination(navHit.position);
+        }
+
+        /// <summary>更新 Animator（用 agent 实际速度驱动动画混合）。</summary>
+        private void UpdateMovement()
+        {
+            _animator.SetFloat(Run, _agent.velocity.magnitude);
+        }
+
+        /// <summary>朝移动方向平滑旋转（亡灵杀手风格：始终面朝行走方向）。</summary>
+        private void UpdateRotation()
+        {
+            Vector3 velocity = _agent.velocity;
+            if (velocity.sqrMagnitude <= 0.01f) return;
+
+            Quaternion targetRot = Quaternion.LookRotation(velocity.normalized);
+            transform.rotation = Quaternion.RotateTowards(
+                transform.rotation,
+                targetRot,
+                rotateSpeed * Time.deltaTime
+            );
+        }
+
+        /// <summary>攻击：检测范围内敌人，朝最近敌人瞬间面向（攻击时允许快速锁定）。</summary>
+        private void Attack()
+        {
+            Collider[] colliders = Physics.OverlapSphere(transform.position, attackRadius);
+            float closestDist = float.MaxValue;
+            Transform closestEnemy = null;
+
+            foreach (var item in colliders)
+            {
+                if (!item.CompareTag("Enemy")) continue;
+
+                float dist = Vector3.Distance(transform.position, item.transform.position);
+                if (dist < closestDist)
                 {
-                    // 点击到可行走区域才会移动
-                    if (NavMesh.SamplePosition(hit.point, out NavMeshHit navHit, 1.0f, NavMesh.AllAreas))
-                    {
-                        agent.SetDestination(navHit.position);
-                        FaceTo(navHit.position);
-                    }
+                    closestDist = dist;
+                    closestEnemy = item.transform;
                 }
+            }
+
+            if (closestEnemy != null)
+            {
+                FaceTarget(closestEnemy.position);
             }
         }
 
-        void FaceTo(Vector3 targetPoint)
+        /// <summary>瞬间面向目标（攻击锁敌用）。</summary>
+        private void FaceTarget(Vector3 targetPoint)
         {
             Vector3 dir = targetPoint - transform.position;
             dir.y = 0;
+            if (dir == Vector3.zero) return;
 
-            if (dir != Vector3.zero)
-            {
-                Quaternion rot = Quaternion.LookRotation(dir);
-                transform.rotation = rot;
-            }
+            transform.rotation = Quaternion.LookRotation(dir);
         }
     }
 }
