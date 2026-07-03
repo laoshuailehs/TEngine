@@ -20,7 +20,7 @@ namespace GameLogic
 
         [Header("移动")]
         [SerializeField] private float moveSpeed = 5f;
-        [SerializeField] private float acceleration = 60f;
+        [SerializeField] private float acceleration = 20f;
         [Tooltip("转向平滑速度（度/秒），越大转身越快")]
         [SerializeField] private float rotateSpeed = 720f;
 
@@ -41,6 +41,8 @@ namespace GameLogic
             _agent.speed = moveSpeed;
             _agent.acceleration = acceleration;
             _agent.angularSpeed = 0f; // 我们自己控制旋转，不需要 agent 的角速度
+            _agent.autoBraking = false; // 关闭自动刹车，防止到达目标时冲过头往回缩
+            _agent.stoppingDistance = 0.1f; // 到目标 0.1 距离就停，避免微调抖动
         }
 
         void Update()
@@ -48,6 +50,7 @@ namespace GameLogic
             HandleInput();
             UpdateMovement();
             UpdateRotation();
+            Attack();
         }
 
         /// <summary>处理鼠标点击移动。</summary>
@@ -104,6 +107,7 @@ namespace GameLogic
             if (closestEnemy != null)
             {
                 FaceTarget(closestEnemy.position);
+                _agent.SetDestination(closestEnemy.position);
             }
         }
 
