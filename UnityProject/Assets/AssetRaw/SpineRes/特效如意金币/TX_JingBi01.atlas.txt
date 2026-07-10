@@ -1,0 +1,17 @@
+TX_JingBi01.png
+size:2048,2048
+filter:Linear,Linear
+tx/Bi01_1
+bounds:2,1164,561,579
+tx/Bi01_2
+bounds:2,583,561,579
+tx/Bi01_3
+bounds:565,1164,561,579
+tx/Bi01_4
+bounds:2,2,561,579
+tx/Bi01_5
+bounds:565,583,561,579
+tx/Bi01_6
+bounds:1128,1164,561,579
+tx/Bi01_7
+bounds:565,2,561,579

@@ -1,0 +1,17 @@
+ZuanpPan01_A.png
+size:2048,1024
+filter:Linear,Linear
+Yuan
+bounds:2,2,405,405
+ZuanpPan01_3_a
+bounds:2,409,540,536
+ZuanpPan01_4
+bounds:544,422,524,523
+offsets:5,5,534,535
+tx/GeZiLight01
+bounds:1070,841,199,104
+tx/GeZiLight02
+bounds:409,208,199,104
+rotate:90
+tx/GeZiLight03
+bounds:1070,735,199,104

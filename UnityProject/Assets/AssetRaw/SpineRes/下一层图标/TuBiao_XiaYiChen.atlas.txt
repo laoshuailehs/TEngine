@@ -1,0 +1,7 @@
+TuBiao_XiaYiChen.png
+size:512,128
+filter:Linear,Linear
+SuCai01
+bounds:2,2,216,69
+SuCai01_a
+bounds:220,2,216,69

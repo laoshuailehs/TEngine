@@ -1,0 +1,11 @@
+ZuanpPan01_C.png
+size:1024,1024
+filter:Linear,Linear
+ZuanpPan03_beifen
+bounds:2,278,540,536
+tx/GeZiLight04
+bounds:2,2,372,274
+tx/GeZiLight05
+bounds:544,540,372,274
+tx/GeZiLight06
+bounds:544,264,372,274

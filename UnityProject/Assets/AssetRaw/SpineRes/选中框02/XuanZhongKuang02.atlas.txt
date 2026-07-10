@@ -1,0 +1,11 @@
+XuanZhongKuang02.png
+size:1024,512
+filter:Linear,Linear
+tx/GeZiLight04
+bounds:2,2,372,274
+rotate:90
+tx/GeZiLight05
+bounds:278,2,372,274
+rotate:90
+tx/GeZiLight06
+bounds:554,100,372,274
