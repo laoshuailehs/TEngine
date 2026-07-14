@@ -23,6 +23,7 @@ namespace GameLogic
         [SerializeField] private SkeletonUtilityBone mLayer0SlotsSpine;
         [SerializeField] private SkeletonGraphic mLayer1Spine;
         [SerializeField] private SkeletonGraphic mLayer2Spine;
+        [SerializeField] private SkeletonGraphic mZhiZhengSpine;
 
         private float _speed;
         private readonly Dictionary<int, List<WheelSlot>> _mAllSlots = new Dictionary<int, List<WheelSlot>>();
@@ -63,9 +64,10 @@ namespace GameLogic
             mLayer0Spine.AnimationState.SetAnimation(0, "Born01", false);
             mLayer1Spine.AnimationState.SetAnimation(0, "Born01", false);
             mLayer2Spine.AnimationState.SetAnimation(0, "Born01", false);
-            
+            mZhiZhengSpine.AnimationState.SetAnimation(0, "Born01", false);
             await UniTask.Delay(TimeSpan.FromSeconds(1.5));
             mLayer0SlotsSpine.mode = SkeletonUtilityBone.Mode.Override;
+            mZhiZhengSpine.AnimationState.AddAnimation(0, "Run", true,1.1f);
             _mState = WheelState.StartAccelerate;
         }
 

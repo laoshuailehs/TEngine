@@ -111,3 +111,11 @@ private void ShowTimer(float time)
 
 IoT集成: 投币器、出票器等硬件设备  
 
+## 打码流程
+登录
+https://mc.cfkj88.com/
+cfkj01
+cfkj01@01
+打开游戏设置，先设置游戏机台号
+再去激活报码，在网站点击天数打码 与 游戏设置一一对应
+
