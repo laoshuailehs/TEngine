@@ -64,7 +64,7 @@ b92df3d3fb3c88c8c4726acf9d598e5e
 4. Build Settings -> 勾选 Export Project
 5. android5.x插u盘更新(去掉了android7.0兼容)工具 -> 将signapk文件复制到打包目录上一级 ->
 android5.x插u盘更新(去掉了android7.0兼容)将此文件中的两个文件复制替换到出包目录
-6. 用Android Studio 打开项目修改 版本号 
+6. 用Android Studio 打开项目修改 版本号
 ![](./pic/build1.png)
 ![](./pic/build2.png)
 7. 打包
@@ -84,7 +84,7 @@ android5.x插u盘更新(去掉了android7.0兼容)将此文件中的两个文件
 2. 点击unity中HybridCLR -> Generate -> LinkXml
 3. 点击unity中Tools -> Copy Dll
 4. Build Settings -> 勾选 Export Project
-5. 将unity打的包放在一个临时文件Temp中 将文件里的两个文件复制到Build文件夹对应位置 
+5. 将unity打的包放在一个临时文件Temp中 将文件里的两个文件复制到Build文件夹对应位置
 ![](./pic/build17.png)
 6. 安卓打开项目打包
 
@@ -112,4 +112,50 @@ SBoxInit.Instance.Init("192.168.3.82", OnInitSBox);
 npm install -g @openai/codex
 
 之前配过cluade code
-配完rider的ccgui 改一下api 就自动好了？
+在ccswitch中配置好codex的模型就行
+配完rider的ccgui 改一下api 就自动好了
+
+## 接入claude code
+
+1. 前置依赖  
+下载git
+[git链接](https://registry.npmmirror.com/binary.html?path=git-for-windows)
+
+![git](../Books/src/git.png)
+
+1. Claude Code 主要通过 npm 包分发，因此 Node.js 是必需项。
+检查 Node.js 是否安装：win + R 输入 cmd 打开终端输入以下命令，确保版本在 16.0 以上（推荐 18+）。  
+如果你还没有安装 Node.js，请前往 [nodejs.org](https://nodejs.org/zh-cn)下载安装长期支持版（LTS  
+输入以下代码 查看是否安装
+
+```c#
+node --version
+npm --version
+
+# 安装claude code
+# 以管理员身份打开 Powershell 或命令提示符
+
+# 全局安装
+npm install -g @anthropic-ai/claude-code
+
+# 验证安装
+claude --version
+
+
+```
+
+1. 下载ccswitch 配置api
+[ccswitch链接](https://www.ccswitch.io/zh/)
+
+2. 下载vscode 安装插件 Claude Code for VS Code 或者 rider 安装插件 ccgui
+
+# 打码网站
+
+https://mc.cfkj88.com/  
+
+cfkj01  
+
+cfkj01@01
+
+1. 打开游戏，修改游戏机台号，打开设置的激活报码 一一对应
+![](../Books/src/打码.png)
